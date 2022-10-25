@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.astro"],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {},
     spacing: {

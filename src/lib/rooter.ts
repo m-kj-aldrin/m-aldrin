@@ -38,12 +38,17 @@ async function diff_styles(target_document: Document) {
 
 async function diff_scripts(target_document: Document) {
     const targetScripts = [...target_document.querySelectorAll("script")];
-    targetScripts.forEach(script => import(/* @vite-ignore */script.src));
+    console.log(targetScripts)
+    if (targetScripts.length) {
+        targetScripts.forEach(script => script.src ? import(/* @vite-ignore */script.src) : null);
+    }
 }
 
 async function transition(target: HTMLAnchorElement) {
 
-    const { href } = target
+    const { href, pathname } = target
+    const destinationLinks = document.querySelectorAll(`[href=${CSS.escape(pathname)}]`)
+    destinationLinks.forEach(l => l.classList.add('destination'))
     document.documentElement.classList.add('is-rooting')
     document.dispatchEvent(new CustomEvent('rooting', {
         detail: {
@@ -144,7 +149,8 @@ async function transition(target: HTMLAnchorElement) {
     source_element.remove()
 
     document.dispatchEvent(new Event('navigating-done'))
-    target.classList.remove('destination')
+    destinationLinks.forEach(l => l.classList.remove('destination'))
+    // target.classList.remove('destination')
 
     document.documentElement.classList.add('is-animating')
     source_parent.appendChild(target_document.querySelector('main'))
@@ -169,7 +175,7 @@ function handleClick(e: Event) {
             }
             return
         }
-        target.classList.add('destination')
+        // target.classList.add('destination')
         history.pushState(null, null, target.href)
         transition(target)
     }
@@ -177,6 +183,6 @@ function handleClick(e: Event) {
 }
 document.addEventListener('click', handleClick)
 
-window.addEventListener('popstate', () => transition(location.href))
+window.addEventListener('popstate', () => transition(location))
 
 export { }
