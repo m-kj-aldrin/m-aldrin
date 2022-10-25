@@ -1,0 +1,26 @@
+---
+import Coords from "@lib/components/arte/Coords.astro";
+import Splash from "@lib/components/Splash.astro";
+import Transition from "@lib/components/Transition.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout pageOrder={0}>
+  <Transition
+    in={{
+      delay: 500,
+      duration: 1000,
+      transform: { translate: { y: 4, x: -4 } },
+    }}
+    out={{ duration: 500, transform: { translate: { x: 0, y: 32 } } }}
+    class="end sm:col-start-[-7] col-span-full row-start-1 row-end-[-3] sm:row-span-full"
+  >
+    <Coords
+      len={192}
+      class="sm:rotate-[130deg] sm:-translate-x-[25%] sm:translate-y-[15%] sm:scale-150 md:rotate-45 md:translate-x-0 md:translate-y-[0] md:scale-100"
+    />
+  </Transition>
+  <Splash class="col-span-full sm:col-start-2 sm:row-start-3" />
+</BaseLayout>
+
+<style></style>

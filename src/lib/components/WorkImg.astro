@@ -1,0 +1,9 @@
+---
+interface Props {
+  dir: string;
+  src: string;
+}
+const { dir, src } = Astro.props as Props;
+---
+
+<img src={`/assets/work/${dir}/img/${src}`} alt="" />

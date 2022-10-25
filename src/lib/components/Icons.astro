@@ -1,0 +1,61 @@
+---
+interface Props {
+  width: number;
+  height: number;
+  type: "home" | "work" | "writing" | "portal";
+}
+const { width, height, type } = Astro.props as Props;
+---
+
+<svg
+  width={width}
+  height={height}
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 28 28"
+  fill="none"
+  stroke="currentColor"
+>
+  <g
+    transform="scale(0.5)"
+    vector-effect="non-scaling-stroke"
+    transform-origin="center"
+  >
+    {
+      () => {
+        switch (type) {
+          case "home":
+            return (
+              <rect
+                width="100%"
+                height="100%"
+                vector-effect="non-scaling-stroke"
+              />
+            );
+          case "work":
+            return (
+              <path
+                d="M0,28 l28,0 l-14,-28 z"
+                vector-effect="non-scaling-stroke"
+              />
+            );
+          case "writing":
+            return (
+              <circle
+                cx="14"
+                cy="14"
+                r="14"
+                vector-effect="non-scaling-stroke"
+              />
+            );
+          default:
+            return <path d="M0,14 H28" vector-effect="non-scaling-stroke" />;
+        }
+      }
+    }
+  </g>
+</svg>
+<style>
+  svg {
+    pointer-events: none;
+  }
+</style>

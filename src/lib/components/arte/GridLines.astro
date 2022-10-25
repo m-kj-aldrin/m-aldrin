@@ -1,0 +1,51 @@
+---
+interface Props {
+  patternSize?: number;
+  sWidth?: number;
+  class?: string;
+}
+const { patternSize = 16, sWidth = 0.1, class: _class } = Astro.props as Props;
+---
+
+<svg
+  id="gridlines"
+  class={_class}
+  width="100%"
+  height="100%"
+  style=" contain: paint ;pointer-events: none;"
+  viewBox="0 0 256 256"
+  preserveAspectRatio="xMidYMid slice"
+>
+  <defs>
+    <pattern
+      id="pattern-grid"
+      viewBox={`0 0 ${patternSize} ${patternSize}`}
+      width={patternSize}
+      height={patternSize}
+      patternUnits="userSpaceOnUse"
+    >
+      <g stroke="currentColor" fill="none" stroke-width={sWidth}>
+        <g class="opacity-50">
+          <line x1={0} x2={patternSize} y1="0" y2={patternSize}></line>
+          <line x1={patternSize} x2={0} y1="0" y2={patternSize}></line>
+        </g>
+        <circle
+          fill="currentColor"
+          cx={patternSize / 2}
+          cy={patternSize / 2}
+          r={sWidth * 2}
+          opacity="0.75"></circle>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#pattern-grid)" fill-opacity="1"
+  ></rect>
+</svg>
+
+<style>
+  svg {
+    grid-column: 1/-1;
+    grid-row: 1/-1;
+    /* opacity: 0.25; */
+  }
+</style>

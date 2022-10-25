@@ -1,0 +1,176 @@
+---
+interface transform {
+  rotate?: number;
+  scale?: { x?: number; y?: number };
+  translate?: { x?: number; y?: number };
+}
+interface Props {
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+  easing?: string;
+  in?: {
+    opacity?: number;
+    transform?: transform;
+    duration?: number;
+    delay?: number;
+  };
+  out?: {
+    opacity?: number;
+    transform?: transform;
+    duration?: number;
+    delay?: number;
+  };
+}
+const {
+  as: Element = "div",
+  class: _class = "",
+  in: _in,
+  out: _out,
+  easing,
+} = Astro.props as Props;
+const inString = `
+${_in?.delay !== undefined ? `--in-delay:${_in.delay}ms;` : ""}
+${_in?.duration !== undefined ? `--in-duration:${_in.duration}ms;` : ""}
+${_in?.opacity !== undefined ? `--in-opacity:${_in.opacity};` : ""}
+${
+  _in?.transform?.rotate !== undefined
+    ? `--in-transform-rotate:rotate(${_in.transform.rotate}deg);`
+    : ""
+} 
+${
+  _in?.transform?.scale?.x !== undefined
+    ? `--in-transform-scale-x:scaleX(${_in.transform.scale.x});`
+    : ""
+} 
+${
+  _in?.transform?.scale?.y !== undefined
+    ? `--in-transform-scale-y:scaleY(${_in.transform.scale.y});`
+    : ""
+} 
+${
+  _in?.transform?.translate?.x !== undefined
+    ? `--in-transform-translate-x:calc(var(--page-direction,1) * ${_in.transform.translate.x}px);`
+    : ""
+} 
+${
+  _in?.transform?.translate?.y !== undefined
+    ? `--in-transform-translate-y:calc(var(--page-direction,1) * ${_in.transform.translate.y}px);`
+    : ""
+} 
+`;
+const outString = `
+${_out?.delay !== undefined ? `--out-delay:${_out.delay}ms;` : ""}
+${_out?.duration !== undefined ? `--out-duration:${_out.duration}ms;` : ""}
+${_out?.opacity !== undefined ? `--out-opacity:${_out.opacity};` : ""}
+${
+  _out?.transform?.rotate !== undefined
+    ? `--out-transform-rotate:rotate(${_out.transform.rotate}deg);`
+    : ""
+} 
+${
+  _out?.transform?.scale?.x !== undefined
+    ? `--out-transform-scale-x:scaleX(${_out.transform.scale.x});`
+    : ""
+} 
+${
+  _out?.transform?.scale?.y !== undefined
+    ? `--out-transform-scale-y:scaleY(${_out.transform.scale.y});`
+    : ""
+} 
+${
+  _out?.transform?.translate?.x !== undefined
+    ? `--out-transform-translate-x:calc(var(--page-direction,1) * ${_out.transform.translate.x}px);`
+    : ""
+} 
+${
+  _out?.transform?.translate?.y !== undefined
+    ? `--out-transform-translate-y:calc(var(--page-direction,1) * ${_out.transform.translate.y}px);`
+    : ""
+} 
+`;
+// let html = await Astro.slots.render("default");
+
+// if (html.search("class=") === -1) {
+//   html = html.replace(/<\w*/, `$& class="transitioner"`);
+// } else {
+//   html = html.replace(/class="[\w\s-\.[\]]*/, `$& transitioner"`);
+// }
+// html = html.replace(
+//   /<\w*/,
+//   `$& style="${inString}${outString};--easing:${
+//     easing ? easing : "ease-in-out"
+//   }"`
+// );
+---
+
+<!-- <Fragment set:html={html} /> -->
+<Element
+  class={`transitioner ${_class}`}
+  style={`${inString}${outString};--easing:${easing ? easing : "ease-in-out"}`}
+>
+  <slot />
+</Element>
+<style is:global>
+  [class*="transitioner"] {
+    transition-property: transform, opacity;
+    transition-duration: var(--in-duration, 200ms);
+    transition-delay: var(--in-delay, 0ms);
+    transition-timing-function: var(--easing, ease-in-out);
+  }
+  .transitioner {
+    transform-origin: left;
+    --in-delay: 0ms;
+    --out-delay: 0ms;
+    /* will-change: transform, opacity; */
+    /* background-color: red; */
+    /* contain: strict; */
+  }
+  /* [class*="is-animating"] */
+  html.is-animating .transitioner {
+    opacity: var(--in-opacity, 0);
+    --in-transform: var(--in-transform-rotate, rotate(0deg))
+      var(--in-transform-scale-x, scaleX(1))
+      var(--in-transform-scale-y, scaleY(1))
+      translate(
+        var(--in-transform-translate-x, 0px),
+        var(--in-transform-translate-y, 0px)
+      );
+    transform: var(--in-transform, rotate(0deg) scale(1) translate(0px, 0px));
+  }
+  html.is-animating-out .transitioner:not(.end) {
+    transition-duration: var(--out-duration, var(--in-duration, 200ms));
+    transition-delay: var(--out-delay, var(--in-delay, 0ms));
+    opacity: var(--out-opacity, var(--in-opacity, 0));
+    --out-transform: var(--out-transform-rotate, rotate(0deg))
+      var(--out-transform-scale-x, scaleX(1))
+      var(--out-transform-scale-y, scaleY(1))
+      translate(
+        var(--out-transform-translate-x, 0px),
+        var(--out-transform-translate-y, 0px)
+      );
+    transform: var(
+      --out-transform,
+      var(--in-transform, rotate(0deg) scale(1) translate(0px, 0px))
+    );
+  }
+  @media (min-width: 640px) {
+    html.is-animating .transitioner.swap {
+      --in-transform: var(--in-transform-rotate, rotate(0deg))
+        var(--in-transform-scale-x, scaleX(1))
+        var(--in-transform-scale-y, scaleY(1))
+        translate(
+          var(--in-transform-translate-y, 0px),
+          var(--in-transform-translate-x, 0px)
+        );
+    }
+    html.is-animating-out .transitioner.swap:not(.end) {
+      --out-transform: var(--out-transform-rotate, rotate(0deg))
+        var(--out-transform-scale-x, scaleX(1))
+        var(--out-transform-scale-y, scaleY(1))
+        translate(
+          var(--out-transform-translate-y, 0px),
+          var(--out-transform-translate-x, 0px)
+        );
+    }
+  }
+</style>

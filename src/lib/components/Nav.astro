@@ -1,0 +1,85 @@
+---
+import Icons from "./Icons.astro";
+
+export interface route {
+  name: string;
+  path: string;
+}
+interface Props {
+  routes: route[];
+}
+const { routes } = Astro.props as Props;
+const { pathname } = Astro.url;
+---
+
+<nav>
+  <ul>
+    {
+      routes.map(route => {
+        return (
+          <li>
+            <a
+              aria-current={route.path === pathname ? "page" : null}
+              href={route.path}
+            >
+              <Icons width={30} type={route.name.toLowerCase()} />
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+<script>
+  const nav = document.querySelector("nav");
+  const lis = nav.querySelectorAll("li");
+  document.addEventListener("navigating-done", e => {
+    lis.forEach(li => {
+      const a = li.querySelector("a");
+      if (a.pathname === location.pathname) {
+        a.setAttribute("aria-current", "page");
+      } else {
+        a.removeAttribute("aria-current");
+      }
+    });
+  });
+</script>
+<style>
+  a {
+    display: block;
+    stroke-width: 1.5px;
+  }
+  nav {
+    margin: 16px;
+    z-index: 50;
+    background-color: hsl(var(--col-wht) / 0.85);
+    border-radius: 4px;
+    box-shadow: 0 0 12px 2px hsl(var(--col-prim) / 0.2);
+  }
+  ul {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    gap: 4px;
+    padding: 4px;
+  }
+  ul li {
+    height: max-content;
+  }
+  @media (min-width: 640px) {
+    ul {
+      flex-direction: row;
+    }
+  }
+  a {
+    transition-property: background-color, color, text-decoration-thickness;
+    transition-duration: 100ms;
+    transition-delay: 25ms;
+  }
+
+  .error {
+    transition-delay: 0ms;
+    color: white;
+    background-color: red;
+  }
+</style>

@@ -1,0 +1,289 @@
+---
+import { range } from "@lib/util/iter";
+import { frand } from "@lib/util/stocha";
+
+interface Props {
+  class?: string;
+  n?: number;
+  len?: number;
+  patternSize?: number;
+}
+
+// {% set crestSize = 1 %}
+// {% set pathString = "" %}
+// {% set waveFrq = 2 %}
+// {% for p in range(1, (n * waveFrq)) %}
+//   {% set sign = 1 - ((p%2)*2) %}
+//   {% set pathPart = "t0" + "," + l / n / waveFrq + " " %}
+//   {% set pathString = pathString + pathPart %}
+// {% endfor %}
+
+const crestSize = 1;
+const waveFrq = 2;
+const buildWavePath = () =>
+  range(waveFrq * n - 1)
+    .map(i => {
+      let sign = 1 - (i % 2) * 2;
+      let pathPart = `t0,${len / n / waveFrq} `;
+      return pathPart;
+    })
+    .join("");
+
+let nMovers = 32;
+const {
+  class: _class,
+  len = 192,
+  n = 8,
+  patternSize = 4,
+} = Astro.props as Props;
+---
+
+<!-- <svg class={_class} width="100%" height="100%" viewBox="0 0 256 256">
+  <rect width="100%" height="100%" fill="orange"></rect>
+  <g transform="translate(128 128)">
+    <circle r="32"></circle>
+  </g>
+</svg>
+
+<style>
+    svg{
+        background-color: orange;
+    }
+</style> -->
+<svg
+  width="100%"
+  height="100%"
+  viewBox="0 0 256 256"
+  style="overflow: visible;"
+  class={_class}
+>
+  <!-- {% set n = 8 %}
+  {% set cls = cycler(false, true, false) %}
+  {% set l = 192 %} -->
+  <defs>
+    <filter id="filter-scribble">
+      <feTurbulence baseFrequency="0.1" type="fractalNoise" seed="1"
+      ></feTurbulence>
+      <feDisplacementMap
+        in="SourceGraphic"
+        xChannelSelector="R"
+        yChannelSelector="G"
+        scale="7"></feDisplacementMap>
+      <feGaussianBlur stdDeviation="0.01"></feGaussianBlur>
+      <feColorMatrix
+        type="matrix"
+        values="
+      1 0 0 0 0
+      0 1 0 0 0
+      0 0 1 0 0
+      0 0 0 2 -0.25
+      "
+      ></feColorMatrix>
+    </filter>
+    <linearGradient id="coords-lgradient-0" gradientTransform="rotate(90)">
+      <stop stop-color="black" offset="13%"></stop>
+      <stop stop-color="white" offset="20%"></stop>
+      <stop stop-color="white" offset="80%"></stop>
+      <stop stop-color="black" offset="95%"></stop>
+    </linearGradient>
+    <mask id="coords-mask-fadeout">
+      <rect x="-32" width="64" height={len} fill="url(#coords-lgradient-0)"
+      ></rect>
+    </mask>
+    <pattern
+      width={patternSize}
+      height={patternSize}
+      patternTransform="rotate(45)"
+      id="coords-pattern-cross"
+      patternUnits="userSpaceOnUse"
+    >
+      <g stroke="hsl(var(--col-blk))" stroke-width="1">
+        <path d={`M${patternSize},0 v${patternSize}`}></path>
+        <path d={`M0,${patternSize} h${patternSize}`}></path>
+      </g>
+    </pattern>
+  </defs>
+
+  <g transform="translate(128 32)">
+    <g transform="translate(0 0)">
+      <g fill="hsl(var(--col-prim)">
+        <rect x="2" y="2" width="30" height="30"></rect>
+        <rect
+          x="2"
+          y="-516"
+          width="30"
+          height="512"
+          fill="url(#coords-pattern-cross)"></rect>
+      </g>
+
+      <g>
+        <g stroke-width="2">
+          <line
+            x1="0"
+            x2="64"
+            y1="0"
+            y2="0"
+            stroke-width="2"
+            stroke="hsl(var(--col-second))"></line>
+
+          <circle cx="64" cy="0" r="1"></circle>
+
+          <g transform="translate(64 0)">
+            <circle
+              r="4"
+              fill="none"
+              stroke-width="0.5"
+              stroke-opacity="0.25"
+              stroke="hsl(var(--col-ternary)"></circle>
+
+            <g>
+              {
+                range(3).map(i => {
+                  return (
+                    <g transform={`rotate(${(i * 360) / 3})`}>
+                      <circle
+                        cx="8"
+                        r="1.5"
+                        fill="hsl(var(--col-prim))"
+                        opacity="1"
+                      />
+                      <animateTransform
+                        attributeName="transform"
+                        attributeType="XML"
+                        type="rotate"
+                        dur="8s"
+                        repeatCount="indefinite"
+                        values="0;360"
+                        additive="sum"
+                      />
+                      <animateTransform
+                        attributeName="transform"
+                        attributeType="XML"
+                        type="scale"
+                        dur={`${10 + frand(0, 3)}s`}
+                        repeatCount="indefinite"
+                        values={`1;${1 + (i / 3) * 0.2};1`}
+                        additive="sum"
+                      />
+                    </g>
+                  );
+                })
+              }
+
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="scale"
+                dur="16s"
+                repeatCount="indefinite"
+                values="1;1.2;1"
+                additive="sum"></animateTransform>
+            </g>
+          </g>
+          <g>
+            <path
+              id="coords-path-0"
+              d={`M0,0 q${crestSize},${len / n / waveFrq / 2} 0,${
+                len / n / waveFrq
+              } ${buildWavePath()}`}
+              fill="none"
+              stroke-width="0.5"
+              stroke="hsl(var(--col-second))"></path>
+          </g>
+        </g>
+
+        {
+          range(n).map(i => {
+            return (
+              <g transform={`translate(0 ${(i / (n - 1)) * len})`}>
+                <circle cx="0" cy="0" r={`${1 + (i / n) * 0}`} />
+                {(i - 1) % 3 ? (
+                  ""
+                ) : (
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r={10}
+                    fill="transparent"
+                    stroke-width="0.5"
+                    stroke="currentColor"
+                  />
+                )}
+              </g>
+            );
+          })
+        }
+
+        <g
+          mask="url(#coords-mask-fadeout)"
+          fill="hsl(var(--col-second))"
+          filter=""
+        >
+          {
+            range(nMovers).map(i => {
+              let rectSize = 1 + (i / nMovers) * 1;
+              return (
+                <g transform={`translate(${frand(-5, 5)} 0)`}>
+                  {frand(0, 1) > 0.5 ? (
+                    <rect
+                      height={rectSize * 0.5}
+                      width={rectSize * frand(1, 2)}
+                      fill={`${frand(0, 1) > 0.5 ? "hsl(var(--col-prim)" : ""}`}
+                    >
+                      <animateMotion
+                        rotate="auto"
+                        keyPoints="1;0"
+                        keyTimes="0;1"
+                        calcMode="linear"
+                        begin={-i}
+                        dur={`${8 + i / nMovers}s`}
+                        repeatCount="indefinite"
+                      >
+                        <mpath xlink:href="#coords-path-0" />
+                      </animateMotion>
+                    </rect>
+                  ) : (
+                    <circle
+                      r={`${1 + (i / nMovers) * 0.5}`}
+                      fill={`${
+                        frand(0, 1) > 0.5 ? "hsl(var(--col-prim))" : ""
+                      }`}
+                    >
+                      <animateMotion
+                        rotate="auto"
+                        keyPoints="0;1"
+                        keyTimes="0;1"
+                        calcMode="linear"
+                        begin={-i}
+                        dur={`${8 + i / nMovers + frand(0, 1)}s`}
+                        repeatCount="indefinite"
+                      >
+                        <mpath xlink:href="#coords-path-0" />
+                      </animateMotion>
+                    </circle>
+                  )}
+                </g>
+              );
+            })
+          }
+        </g>
+        <g transform={`translate(0 ${len})`}>
+          <circle
+            r="7"
+            fill="transparent"
+            stroke-width="3"
+            stroke="hsl(var(--col-ternary))"></circle>
+        </g>
+        <g transform={`translate(0 ${(len / (n - 1)) * 3})`}>
+          <circle
+            r="4"
+            fill="hsl(var(--col-prim))"
+            fill-opacity="0.25"
+            stroke-width="0.5"
+            stroke="hsl(var(--col-prim))"></circle>
+        </g>
+      </g>
+    </g>
+    <!-- </g> -->
+  </g>
+</svg>

@@ -1,0 +1,1 @@
+export const frand = (a: number, b: number) => Math.random() * (b - a) + a
