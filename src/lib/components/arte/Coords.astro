@@ -38,18 +38,6 @@ const {
 } = Astro.props as Props;
 ---
 
-<!-- <svg class={_class} width="100%" height="100%" viewBox="0 0 256 256">
-  <rect width="100%" height="100%" fill="orange"></rect>
-  <g transform="translate(128 128)">
-    <circle r="32"></circle>
-  </g>
-</svg>
-
-<style>
-    svg{
-        background-color: orange;
-    }
-</style> -->
 <svg
   width="100%"
   height="100%"
@@ -57,9 +45,6 @@ const {
   style="overflow: visible;"
   class={_class}
 >
-  <!-- {% set n = 8 %}
-  {% set cls = cycler(false, true, false) %}
-  {% set l = 192 %} -->
   <defs>
     <filter id="filter-scribble">
       <feTurbulence baseFrequency="0.1" type="fractalNoise" seed="1"
@@ -139,11 +124,12 @@ const {
             <g>
               {
                 range(3).map(i => {
+                  let bla = 3;
                   return (
                     <g transform={`rotate(${(i * 360) / 3})`}>
                       <circle
                         cx="8"
-                        r="1.5"
+                        r={`${frand(1, 1.5)}`}
                         fill="hsl(var(--col-prim))"
                         opacity="1"
                       />
@@ -151,7 +137,7 @@ const {
                         attributeName="transform"
                         attributeType="XML"
                         type="rotate"
-                        dur="8s"
+                        dur={`${frand(8, 12)}s`}
                         repeatCount="indefinite"
                         values="0;360"
                         additive="sum"
@@ -284,6 +270,5 @@ const {
         </g>
       </g>
     </g>
-    <!-- </g> -->
   </g>
 </svg>

@@ -4,6 +4,7 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
+  darkMode: "class",
   theme: {
     extend: {},
     spacing: {

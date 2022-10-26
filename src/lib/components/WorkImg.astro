@@ -1,9 +1,12 @@
 ---
 interface Props {
+  class?: string;
   dir: string;
   src: string;
 }
-const { dir, src } = Astro.props as Props;
+const { dir, src, class: _class } = Astro.props as Props;
+import { readdir, readdirSync } from "fs";
+let files = readdirSync(`public/assets/work/${dir}/img`);
 ---
 
-<img src={`/assets/work/${dir}/img/${src}`} alt="" />
+<!-- <img class={_class} src={`/assets/work/${dir}/img/${src}`} alt="" /> --><!-- <img src={bla[0].src} alt="" /> -->

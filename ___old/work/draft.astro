@@ -1,0 +1,37 @@
+---
+import WorkImg from "@lib/components/WorkImg.astro";
+import WorkLayout from "src/layouts/WorkLayout.astro";
+
+export let title = "Draft";
+
+import { readdirSync } from "fs";
+const noDs = (s: string) => s !== ".DS_Store";
+let workDirs = readdirSync(`public/assets/work/`).filter(noDs);
+let works = workDirs.map(dir => {
+  console.log("dir: ", dir);
+  try {
+    return readdirSync(`public/assets/work/${dir}/img`).map(file => {
+      return `/assets/work/${dir}/img/${file}`;
+    });
+  } catch {
+    return "no dir";
+  }
+});
+console.log(works);
+---
+
+<WorkLayout>
+  <h1>{title}</h1>
+  <ul class="row-start-2 col-span-full">
+    {
+      works.map(work => (
+        <li>
+          {work.map(file => {
+            return <img src={file} />;
+          })}
+        </li>
+      ))
+    }
+  </ul>
+  <!-- <WorkImg class="col-start-1 col-end-3" dir={title.toLowerCase()} src="draft0.png" /> -->
+</WorkLayout>

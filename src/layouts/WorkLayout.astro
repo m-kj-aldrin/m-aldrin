@@ -1,7 +1,16 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+// import { readdirSync } from "fs";
+
+// const noDs = (s: string) => s !== ".DS_Store";
+
+// const { title: dir } = Astro.props.frontmatter;
+// let workImgs = readdirSync(`public/assets/work/${dir}/img`)
+//   .filter(noDs)
+//   .map(file => `/assets/work/${dir}/img/${file}`);
 ---
 
 <BaseLayout pageOrder={-1}>
   <slot />
+  <!-- {workImgs.map(url => <img src={url} />)} -->
 </BaseLayout>

@@ -1,25 +1,21 @@
 ---
-import Transition from "@lib/components/Transition.astro";
-import { AstroInstance } from "astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-interface Work extends AstroInstance {
-  url: string;
+import BaseLayout from "src/layouts/BaseLayout.astro";
+
+interface Work {
   title: string;
 }
-const works = (await Astro.glob("./*.astro")) as Work[];
+const works = await Astro.glob<Work>("./*.md");
 ---
 
 <BaseLayout pageOrder={1}>
-  <h1>Work</h1>
+  <h1>Works</h1>
   <ul>
     {
-      works.map((work, i) => {
+      works.map(work => {
         return (
-          <Transition in={{ delay: 200 + i * 60 }} out={{ delay: i * 60 }}>
-            <li>
-              <a href={work.url}>{work.title}</a>
-            </li>
-          </Transition>
+          <li>
+            <a href={work.url.replace("_", "")}>{work.frontmatter.title}</a>
+          </li>
         );
       })
     }

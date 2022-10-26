@@ -15,5 +15,8 @@
     "astro": "^1.5.2",
     "astro-compress": "^1.0.12",
     "tailwindcss": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.5"
   }
 }

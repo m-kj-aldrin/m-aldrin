@@ -1,0 +1,29 @@
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+hr {
+  color: currentColor;
+  border: none;
+  border-bottom-style: solid;
+  border-color: currentColor;
+  border-width: 2px;
+}
+img {
+  max-width: 100%;
+  object-fit: cover;
+}
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+svg {
+  display: block;
+}

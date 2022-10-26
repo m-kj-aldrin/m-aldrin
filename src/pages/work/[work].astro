@@ -1,0 +1,48 @@
+---
+import { MarkdownInstance } from "astro";
+import { readdirSync } from "fs";
+import WorkLayout from "src/layouts/WorkLayout.astro";
+
+export async function getStaticPaths() {
+  const works = await Astro.glob("./*.md");
+  return works.map(md => {
+    return {
+      params: { work: md.frontmatter.title },
+      props: md,
+    };
+  });
+}
+
+const { frontmatter, rawContent } = Astro.props as MarkdownInstance<{
+  title: string;
+}>;
+
+const noDs = (s: string) => s !== ".DS_Store";
+
+const workImgs = readdirSync(`public/assets/work/${frontmatter.title}/img`)
+  .filter(noDs)
+  .map(file => `/assets/work/${frontmatter.title}/img/${file}`);
+---
+
+<WorkLayout>
+  <header class="col-end-[-1] text-right mb-xs">
+    <h2 class="ml-auto">{frontmatter.title}</h2>
+    <time>2021-01-01</time>
+  </header>
+  <hr class="col-span-full mb-sm" />
+  <p class="md:col-span-7 col-span-full mb-xl">{rawContent}</p>
+  <ul class="row-start-4 col-span-full grid md:grid-cols-2 gap-xs">
+    {
+      workImgs.map(url => (
+        <li>
+          <img src={url} />
+        </li>
+      ))
+    }
+  </ul>
+</WorkLayout>
+<style>
+  img {
+    height: 100%;
+  }
+</style>
