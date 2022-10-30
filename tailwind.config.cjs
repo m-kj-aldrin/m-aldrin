@@ -6,7 +6,11 @@ module.exports = {
   },
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateRows: {
+        12: "repeat(12, minmax(auto,1fr))",
+      },
+    },
     spacing: {
       "2xs": "var(--space-3xs)",
       xs: "var(--space-2xs)",
@@ -19,7 +23,7 @@ module.exports = {
       "5xl": "var(--space-3xl)",
     },
     fontSize: {
-      sm: "var(--step-1)",
+      sm: "var(--step--1)",
       base: "var(--step-0)",
       xl: "var(--step-1)",
       "2xl": "var(--step-3)",

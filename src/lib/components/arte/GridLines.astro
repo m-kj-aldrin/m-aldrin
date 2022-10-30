@@ -25,15 +25,16 @@ const { patternSize = 16, sWidth = 0.1, class: _class } = Astro.props as Props;
       patternUnits="userSpaceOnUse"
     >
       <g stroke="currentColor" fill="none" stroke-width={sWidth}>
-        <g class="opacity-50">
+        <g class="opacity-50" stroke-dasharray="2">
           <line x1={0} x2={patternSize} y1="0" y2={patternSize}></line>
           <line x1={patternSize} x2={0} y1="0" y2={patternSize}></line>
         </g>
         <circle
+          stroke="none"
           fill="currentColor"
           cx={patternSize / 2}
           cy={patternSize / 2}
-          r={sWidth * 2}
+          r={sWidth * 1.25}
           opacity="0.75"></circle>
       </g>
     </pattern>

@@ -8,7 +8,6 @@ import { readdirSync } from "fs";
 const noDs = (s: string) => s !== ".DS_Store";
 let workDirs = readdirSync(`public/assets/work/`).filter(noDs);
 let works = workDirs.map(dir => {
-  console.log("dir: ", dir);
   try {
     return readdirSync(`public/assets/work/${dir}/img`).map(file => {
       return `/assets/work/${dir}/img/${file}`;
@@ -17,7 +16,6 @@ let works = workDirs.map(dir => {
     return "no dir";
   }
 });
-console.log(works);
 ---
 
 <WorkLayout>

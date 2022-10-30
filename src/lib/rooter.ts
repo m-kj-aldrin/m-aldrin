@@ -38,7 +38,6 @@ async function diff_styles(target_document: Document) {
 
 async function diff_scripts(target_document: Document) {
     const targetScripts = [...target_document.querySelectorAll("script")];
-    console.log(targetScripts)
     if (targetScripts.length) {
         targetScripts.forEach(script => script.src ? import(/* @vite-ignore */script.src) : null);
     }
@@ -110,7 +109,6 @@ async function transition(target: HTMLAnchorElement) {
     const sourceOrder = document.body.dataset.pageOrder
     const targetOrder = target_document.body.dataset.pageOrder
     let pageDirection = 0
-    console.log(parseInt(sourceOrder), parseInt(targetOrder))
     if (parseInt(sourceOrder) == -1 || parseInt(targetOrder) == -1) {
     } else {
 
@@ -149,11 +147,13 @@ async function transition(target: HTMLAnchorElement) {
     source_element.remove()
 
     document.dispatchEvent(new Event('navigating-done'))
+    document.head.querySelector('title').textContent = target_document.head.querySelector('title').textContent
     destinationLinks.forEach(l => l.classList.remove('destination'))
     // target.classList.remove('destination')
 
     document.documentElement.classList.add('is-animating')
     source_parent.appendChild(target_document.querySelector('main'))
+    document.querySelectorAll('video').forEach(video => video.src = video.src)
     setTimeout(() => document.documentElement.classList.remove('is-animating'));
 
     await Promise.all(in_animated_elements)
@@ -163,7 +163,7 @@ async function transition(target: HTMLAnchorElement) {
 
 function handleClick(e: Event) {
     let target = e.composedPath()[0] as HTMLAnchorElement
-    if (target.tagName === 'A') {
+    if (target.tagName === 'A' && target.origin === location.origin) {
         e.preventDefault()
         if (target.pathname === location.pathname) {
             target.classList.add('error')

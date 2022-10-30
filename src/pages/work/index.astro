@@ -1,23 +1,113 @@
 ---
 import BaseLayout from "src/layouts/BaseLayout.astro";
+import { read, readdir, readdirSync } from "fs";
+import { MarkdownInstance } from "astro";
+import Time from "@lib/components/Time.astro";
+import Transition from "@lib/components/Transition.astro";
 
 interface Work {
   title: string;
+  date: string;
+  tags: string[];
 }
-const works = await Astro.glob<Work>("./*.md");
+const works = await Astro.glob<Work>("./_works/*.md");
+
+const noDs = (s: string) => s !== ".DS_Store";
+const previews = works.map(work => {
+  const workDir = readdirSync(`public/assets/work/${work.frontmatter.title}/`);
+  let file;
+  if (workDir.find(f => f === "video")) {
+    file = readdirSync(
+      `public/assets/work/${work.frontmatter.title}/video`
+    ).filter(noDs)[0];
+    file = `video/${file}`;
+  } else {
+    file = readdirSync(
+      `public/assets/work/${work.frontmatter.title}/img`
+    ).filter(noDs)[0];
+    file = `img/${file}`;
+  }
+
+  return {
+    ...work,
+    img: `/assets/work/${work.frontmatter.title}/${file}`,
+    end: work.frontmatter?.enddate === "continue",
+  };
+});
+console.log(previews);
 ---
 
-<BaseLayout pageOrder={1}>
-  <h1>Works</h1>
-  <ul>
+<BaseLayout pageOrder={1} class="grid-cols-12" title="Work">
+  <ul
+    class="md:col-start-2 md:col-end-[-2] col-span-full grid md:grid-cols-2 gap-xs"
+  >
     {
-      works.map(work => {
+      previews.map((work, i) => {
         return (
-          <li>
-            <a href={work.url.replace("_", "")}>{work.frontmatter.title}</a>
-          </li>
+          <Transition
+            in={{ delay: i * 60, transform: { translate: { y: 10 } } }}
+            out={{ delay: i * 60, transform: { translate: { y: -10 } } }}
+          >
+            <li class="p-xs bg-wht work ">
+              <a
+                class="grid gap-xs  h-full no-underline"
+                href={`${work.url.replace("_works/", "")}`}
+              >
+                <h3 class="col-start-1 row-span-1">{work.frontmatter.title}</h3>
+                <ul class="row-start-1 row-span-2 col-start-4 tags flex text-[12px] gap-2xs">
+                  {work.frontmatter.tags?.map(tag => {
+                    return (
+                      <li class="border border-solid py-2xs px-[2px] rounded-sm">
+                        {tag}
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div class="flex time items-center col-start-1 row-start-2 self-end gap-xs">
+                  <Time
+                    day={false}
+                    month={!work.end}
+                    class=""
+                    date={new Date(work.frontmatter.date)}
+                  />
+                  {work.end ? (
+                    <span class="flex gap-2xs items-center font-mono  leading-none  mt-auto">
+                      <span>&mdash;</span>
+                      <span>&dash;</span>
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div class="col-start-2 col-span-2 row-start-1 row-span-2 h-full">
+                  {work.img.endsWith(".mp4") ? (
+                    <video src={work.img} />
+                  ) : (
+                    <img class="" src={work.img} alt="a" />
+                  )}
+                </div>
+              </a>
+            </li>
+          </Transition>
         );
       })
     }
   </ul>
 </BaseLayout>
+
+<style>
+  a * {
+    pointer-events: none;
+  }
+  .work {
+    border-radius: 4px;
+    box-shadow: 0 0 12px 0 hsl(var(--col-prim) / 0.1);
+  }
+  .tag {
+  }
+  h3,
+  .time,
+  .tags {
+    writing-mode: vertical-lr;
+  }
+</style>

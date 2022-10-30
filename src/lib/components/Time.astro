@@ -1,0 +1,24 @@
+---
+interface Props {
+  date: Date;
+  class?: string;
+  day?: boolean;
+  month?: boolean;
+  year?: boolean;
+}
+const {
+  date,
+  class: _class,
+  day = true,
+  month = true,
+  year = true,
+} = Astro.props as Props;
+const _date = date.getDate();
+const _month = date.getMonth() + 1;
+const _year = date.getFullYear();
+const dateString = `${year ? `${_year}` : ""}${month ? `-${_month}` : ""}${
+  day ? `-${_date}` : ""
+}`;
+---
+
+<time class={_class} datetime={date.toDateString()}>{dateString}</time>

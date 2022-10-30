@@ -1,48 +1,105 @@
 ---
+import Time from "@lib/components/Time.astro";
 import { MarkdownInstance } from "astro";
 import { readdirSync } from "fs";
 import WorkLayout from "src/layouts/WorkLayout.astro";
 
 export async function getStaticPaths() {
-  const works = await Astro.glob("./*.md");
+  const works = await Astro.glob("./_works/*.md");
   return works.map(md => {
     return {
-      params: { work: md.frontmatter.title },
+      params: {
+        work: md.frontmatter.title,
+      },
       props: md,
     };
   });
 }
 
-const { frontmatter, rawContent } = Astro.props as MarkdownInstance<{
-  title: string;
-}>;
+const { frontmatter, rawContent, compiledContent } =
+  Astro.props as MarkdownInstance<{
+    title: string;
+    date: string;
+    enddate: string;
+  }>;
+
+const date = new Date(frontmatter.date);
 
 const noDs = (s: string) => s !== ".DS_Store";
 
-const workImgs = readdirSync(`public/assets/work/${frontmatter.title}/img`)
-  .filter(noDs)
-  .map(file => `/assets/work/${frontmatter.title}/img/${file}`);
+let workImgs;
+
+const workDir = readdirSync(`public/assets/work/${frontmatter.title}`);
+console.log(workDir);
+if (workDir.find(f => f === "video")) {
+  workImgs = readdirSync(`public/assets/work/${frontmatter.title}/video`)
+    .filter(noDs)
+    .map(file => ({
+      p: `/assets/work/${frontmatter.title}/posters/${file.replace(
+        ".mp4",
+        ".jpg"
+      )}`,
+      v: `/assets/work/${frontmatter.title}/video/${file}`,
+    }));
+} else {
+  workImgs = readdirSync(`public/assets/work/${frontmatter.title}/img`)
+    .filter(noDs)
+    .map(file => `/assets/work/${frontmatter.title}/img/${file}`);
+}
 ---
 
-<WorkLayout>
-  <header class="col-end-[-1] text-right mb-xs">
-    <h2 class="ml-auto">{frontmatter.title}</h2>
-    <time>2021-01-01</time>
+<WorkLayout title={frontmatter.title}>
+  <header class="col-end-[-1] text-right items-end mb-xs flex flex-col">
+    <h2 class="">{frontmatter.title}</h2>
+    {
+      frontmatter.date ? (
+        <div class="flex gap-2xs">
+          <Time day={false} date={date} />
+          {frontmatter.enddate === "continue" ? (
+            <span class="flex gap-2xs items-center font-mono   mt-auto">
+              <span>&mdash;</span>
+              <span class="-translate-y-[1px]">&cir;</span>
+            </span>
+          ) : (
+            ""
+          )}
+        </div>
+      ) : (
+        ""
+      )
+    }
   </header>
   <hr class="col-span-full mb-sm" />
-  <p class="md:col-span-7 col-span-full mb-xl">{rawContent}</p>
+  <!-- <p class="md:col-span-7 col-span-full mb-xl">{rawContent}</p> -->
+  <div class="md:col-span-7 col-span-full mb-xl">
+    <Fragment set:html={compiledContent()} />
+  </div>
   <ul class="row-start-4 col-span-full grid md:grid-cols-2 gap-xs">
     {
       workImgs.map(url => (
         <li>
-          <img src={url} />
+          {url?.v ? (
+            <video
+              src={url.v}
+              poster={url.p}
+              type="video/mp4"
+              loop=""
+              muted=""
+              playsinline=""
+              controls
+            />
+          ) : (
+            <img src={url} />
+          )}
         </li>
       ))
     }
   </ul>
+
+  <style>
+    img,
+    video {
+      height: 100%;
+    }
+  </style>
 </WorkLayout>
-<style>
-  img {
-    height: 100%;
-  }
-</style>

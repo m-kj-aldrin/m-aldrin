@@ -6,7 +6,9 @@ import Grain from "@lib/components/arte/Grain.astro";
 import GridLines from "@lib/components/arte/GridLines.astro";
 
 interface Props {
+  title?: string;
   pageOrder?: number;
+  class?: string;
 }
 
 const routes: route[] = [
@@ -14,41 +16,43 @@ const routes: route[] = [
   { name: "Work", path: "/work/" },
 ];
 
-const { pageOrder } = Astro.props as Props;
+const { pageOrder, class: _class, title } = Astro.props as Props;
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="is-animating">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script defer>
+    <title>{title || "no title"}</title>
+    <!-- <script defer>
       window.onload = e => {
         document.documentElement.classList.remove("is-animating");
       };
-    </script>
+    </script> -->
   </head>
   <body data-page-order={pageOrder}>
-    <GridLines class="text-prim opacity-50" patternSize={24} sWidth={0.2} />
+    <GridLines class="text-prim opacity-50" patternSize={20} sWidth={0.4} />
     <Nav routes={routes} />
-    <Transition
-      class="end swap"
-      as={"main"}
-      out={{
-        transform: { translate: { y: -5 } },
-      }}
-      in={{
-        transform: {
-          translate: {
-            y: 5,
+    <div class="wrapper col-span-full row-span-full">
+      <Transition
+        class={`end swap ${_class}`}
+        as={"main"}
+        out={{
+          transform: { translate: { y: -5 } },
+        }}
+        in={{
+          transform: {
+            translate: {
+              y: 5,
+            },
           },
-        },
-      }}
-    >
-      <slot />
-    </Transition>
+        }}
+      >
+        <slot />
+      </Transition>
+    </div>
     <Grain />
     <script>
       import "../lib/rooter";
@@ -69,28 +73,47 @@ const { pageOrder } = Astro.props as Props;
     z-index: 5;
   }
   :global(main) {
+    overflow: hidden;
+    /* height: 100%; */
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(12, 1fr);
+    /* grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr); */
 
-    grid-row: 1/-1;
-    grid-column: 1/-1;
+    /* grid-row: 1/-1;
+    grid-column: 1/-1; */
 
     padding: 8px;
 
-    contain: strict;
+    /* contain: strict; */
+    /* overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-color: hsl(var(--col-prim)) transparent;
+    scrollbar-width: thin; */
+  }
+  .wrapper {
+    z-index: 1;
+    height: 100%;
+    width: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
     scrollbar-color: hsl(var(--col-prim)) transparent;
     scrollbar-width: thin;
   }
   @media (min-width: 640px) {
+    .wrapper {
+      /* max-width: 64rem;
+      margin-inline: auto; */
+    }
     :global(body > nav) {
       grid-row: 1;
       grid-column: 1;
     }
     :global(main) {
       padding-top: 64px;
+    }
+    :global(main > *) {
+      /* max-width: 64rem;
+      margin-inline: auto; */
     }
   }
 </style>

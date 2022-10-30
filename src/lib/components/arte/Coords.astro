@@ -123,14 +123,16 @@ const {
 
             <g>
               {
-                range(3).map(i => {
-                  let bla = 3;
+                range(12).map((i, _, arr) => {
+                  let n = arr.length;
                   return (
-                    <g transform={`rotate(${(i * 360) / 3})`}>
+                    <g transform={`rotate(${(i * 360) / n})`}>
                       <circle
                         cx="8"
-                        r={`${frand(1, 1.5)}`}
-                        fill="hsl(var(--col-prim))"
+                        r={`${frand(0.5, 1)}`}
+                        fill={`hsl(var(--col-${
+                          frand(0, 1) > 0.5 ? "ternary" : "second"
+                        }))`}
                         opacity="1"
                       />
                       <animateTransform
@@ -146,9 +148,9 @@ const {
                         attributeName="transform"
                         attributeType="XML"
                         type="scale"
-                        dur={`${10 + frand(0, 3)}s`}
+                        dur={`${8 + frand(0, n)}s`}
                         repeatCount="indefinite"
-                        values={`1;${1 + (i / 3) * 0.2};1`}
+                        values={`1;${1 + (i / n) * 0.2};1`}
                         additive="sum"
                       />
                     </g>
