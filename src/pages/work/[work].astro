@@ -80,8 +80,8 @@ if (workDir.find(f => f === "video")) {
           {url?.v ? (
             <video
               src={url.v}
-              poster={url.p}
-              preload="metadata"
+              data-poster={url.p}
+              preload="none"
               type="video/mp4"
               loop=""
               muted=""
@@ -104,3 +104,21 @@ if (workDir.find(f => f === "video")) {
   </style>
 </WorkLayout>
 
+<script>
+  const vids = document.querySelectorAll("video");
+  const obs = new IntersectionObserver(
+    (ent, ob) => {
+      ent.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.setAttribute("poster", e.target.dataset.poster);
+        }
+      });
+    },
+    {
+      threshold: 0.1,
+    }
+  );
+  vids.forEach(vid => {
+    obs.observe(vid);
+  });
+</script>
