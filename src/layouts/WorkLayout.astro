@@ -10,7 +10,7 @@ import BaseLayout from "./BaseLayout.astro";
 //   .map(file => `/assets/work/${dir}/img/${file}`);
 ---
 
-<BaseLayout class="block" pageOrder={-1} title={Astro.props.title}>
+<BaseLayout class="grid-cols-12" pageOrder={-1} title={Astro.props.title}>
   <slot />
   <!-- {workImgs.map(url => <img src={url} />)} -->
 </BaseLayout>

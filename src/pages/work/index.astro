@@ -18,9 +18,9 @@ const previews = works.map(work => {
   let file;
   if (workDir.find(f => f === "video")) {
     file = readdirSync(
-      `public/assets/work/${work.frontmatter.title}/video`
+      `public/assets/work/${work.frontmatter.title}/posters`
     ).filter(noDs)[0];
-    file = `video/${file}`;
+    file = `posters/${file}`;
   } else {
     file = readdirSync(
       `public/assets/work/${work.frontmatter.title}/img`
@@ -34,7 +34,6 @@ const previews = works.map(work => {
     end: work.frontmatter?.enddate === "continue",
   };
 });
-console.log(previews);
 ---
 
 <BaseLayout pageOrder={1} class="grid-cols-12" title="Work">
@@ -80,11 +79,7 @@ console.log(previews);
                   )}
                 </div>
                 <div class="col-start-2 col-span-2 row-start-1 row-span-2 h-full">
-                  {work.img.endsWith(".mp4") ? (
-                    <video src={work.img} />
-                  ) : (
-                    <img class="" src={work.img} alt="a" />
-                  )}
+                  <img loading="lazy" class="" src={work.img} alt="a" />
                 </div>
               </a>
             </li>
@@ -101,7 +96,7 @@ console.log(previews);
   }
   .work {
     border-radius: 4px;
-    box-shadow: 0 0 12px 0 hsl(var(--col-prim) / 0.1);
+    box-shadow: 0 0 12px 0 hsl(var(--col-prim) / 0.2);
   }
   .tag {
   }
