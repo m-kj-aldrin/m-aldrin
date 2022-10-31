@@ -105,20 +105,25 @@ if (workDir.find(f => f === "video")) {
 </WorkLayout>
 
 <script>
-  const vids = document.querySelectorAll("video");
-  const obs = new IntersectionObserver(
-    (ent, ob) => {
-      ent.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.setAttribute("poster", e.target.dataset.poster);
-        }
-      });
-    },
-    {
-      threshold: 0.1,
-    }
-  );
-  vids.forEach(vid => {
-    obs.observe(vid);
-  });
+  const fn = e => {
+    console.log(e);
+    const vids = document.querySelectorAll("video");
+    const obs = new IntersectionObserver(
+      (ent, ob) => {
+        ent.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.setAttribute("poster", e.target.dataset.poster);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+    vids.forEach(vid => {
+      obs.observe(vid);
+    });
+  };
+  document.addEventListener("rooting-done", fn);
+  window.onload = fn;
 </script>

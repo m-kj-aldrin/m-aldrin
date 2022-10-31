@@ -155,7 +155,7 @@ async function transition(target: HTMLAnchorElement) {
     source_parent.appendChild(target_document.querySelector('main'))
     document.querySelectorAll('video').forEach(video => video.src = video.src)
     setTimeout(() => document.documentElement.classList.remove('is-animating'));
-
+    document.dispatchEvent(new Event('rooting-done'))
     await Promise.all(in_animated_elements)
 
     document.documentElement.classList.remove('is-rooting')
